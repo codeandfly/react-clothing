@@ -19,10 +19,12 @@ export const removeItemFromCart = (cartItems, cartItemToRemove) => {
     cartItem => cartItem.id === cartItemToRemove.id
   )
 
+  // if quantity is 1, the next left arrow click will delete item from cart
   if (existingCartItem.quantity === 1) {
     return cartItems.filter(cartItem => cartItem.id !== cartItemToRemove.id)
   }
 
+  // reduce quantity of item by 1
   return cartItems.map(
     cartItem => cartItem.id === cartItemToRemove.id ? 
     { ...cartItem, quantity: cartItem.quantity - 1 }
