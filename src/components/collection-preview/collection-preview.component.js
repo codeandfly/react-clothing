@@ -3,22 +3,22 @@ import { withRouter, Link } from 'react-router-dom';
 
 import CollectionItem from '../collection-item/collection-item.component';
 
-import './collection-preview.styles.scss';
+import { CollectionPreviewContainer, TitleContainer, PreviewContainer } from './collection-preview.styles';
 
 const CollectionPreview = ({ title, items, match, routeName }) => {
   return (
-    <div className="collection-preview">
+    <CollectionPreviewContainer>
       <Link to={`${match.url}/${routeName}`}>
-        <h1 className="title">{title.toUpperCase()} &#8227;</h1>
+        <TitleContainer>{title.toUpperCase()} &#8227;</TitleContainer>
       </Link>
-      <div className="preview">
+      <PreviewContainer>
         {items
           .filter((item, i) => i < 4)
           .map(item => (
           <CollectionItem key={item.id} item={item} />
         ))}
-      </div>
-    </div>
+      </PreviewContainer>
+    </CollectionPreviewContainer>
   )
 }
 
