@@ -51,6 +51,7 @@ export const addCollectionAndDocuments = async (collectionKey, objectsToAdd) => 
   return await batch.commit();
 };
 
+// Normalize data: Convert array of obj from Firestore into objects
 export const convertCollectionsSnapToMap = (collections) => {
   const transformedCollection = collections.docs.map(doc => {
     const { title, items } = doc.data();
