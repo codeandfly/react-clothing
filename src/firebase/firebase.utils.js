@@ -15,6 +15,8 @@ const config = {
 export const createUserProfileDocument = async (userAuth, additionalData) => {
   if (!userAuth) return;
 
+  console.log('additionalData', additionalData)
+
   const userRef = firestore.doc(`users/${userAuth.uid}`);
 
   const snapShot = await userRef.get();
@@ -28,7 +30,7 @@ export const createUserProfileDocument = async (userAuth, additionalData) => {
         displayName,
         email,
         createdAt,
-        ...additionalData
+        ...additionalData 
       })
     } catch (err) {
       console.log('error created user', err.message);
