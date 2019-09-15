@@ -7,6 +7,8 @@ import CustomButton from '../custom-button/custom-button.component';
 import { signUpStart } from '../../redux/user/user.actions';
 
 import { SignUpContainer, SignUpTitle } from './sign-up.styles';
+import { createStructuredSelector } from 'reselect';
+import { selectUserError } from '../../redux/user/user.selector';
 
 class SignUp extends Component {
   state = {
@@ -16,6 +18,17 @@ class SignUp extends Component {
     confirmPassword: '',
     error: ''
   };
+
+  componentDidUpdate(prevProps) {
+    const { userError } = this.props;
+
+    if(prevProps.userError !== userError) {
+      this.setState({
+        ...this.state,
+        error: userError.message
+      })
+    }
+  }
 
   handleSubmit = async e => {
     e.preventDefault();
@@ -37,7 +50,7 @@ class SignUp extends Component {
   handleChange = e => {
     const { name, value } = e.target;
     this.setState({ [name]: value });
-    this.setState({ error: ''});
+    this.setState({ error: '' });
   };
 
   render() {
@@ -98,8 +111,12 @@ class SignUp extends Component {
   }
 }
 
+const mapStateToProps = createStructuredSelector({
+  userError: selectUserError
+})
+
 const mapDispatchToProps = dispatch => ({
   signUpStart: userCredentials => dispatch(signUpStart(userCredentials))
 })
 
-export default connect(null, mapDispatchToProps)(SignUp);
+export default connect(mapStateToProps, mapDispatchToProps)(SignUp);
