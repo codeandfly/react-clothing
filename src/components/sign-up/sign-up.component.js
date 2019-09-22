@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 
 import FormInput from '../form-input/form-input.component';
@@ -10,90 +10,95 @@ import { SignUpContainer, SignUpTitle } from './sign-up.styles';
 import { createStructuredSelector } from 'reselect';
 import { selectUserError } from '../../redux/user/user.selector';
 
-class SignUp extends Component {
-  state = {
+const SignUp = ({ signUpStart, userError }) => {
+  const [userCredentials, setUserCredentials] = useState({
     displayName: '',
     email: '',
     password: '',
     confirmPassword: '',
     error: ''
-  };
+  });
 
-  componentDidUpdate(prevProps) {
-    const { userError } = this.props;
-
-    if(prevProps.userError !== userError) {
-      this.setState({
-        ...this.state,
-        error: userError.message
-      })
+  const setFirebaseError = userError => {
+    if (userError) {
+      setUserCredentials({ ...userCredentials, error:  userError.message})
     }
   }
 
-  handleSubmit = async e => {
+  useEffect(() => {
+    // const {msg} = userError.message
+    setFirebaseError(userError)
+  }, [userError])
+
+  const { displayName, email, password, confirmPassword, error } = userCredentials;
+
+  const handleSubmit = async e => {
     e.preventDefault();
 
-    const { signUpStart } = this.props;
-    const { displayName, email, password, confirmPassword } = this.state;
     if (password !== confirmPassword) {
       // alert("Passwords don't match");
-      this.setState({
-        ...this.state,
-        error: `Passwords don't match`
-      });
+      setUserCredentials({ ...userCredentials, error: `Passwords don't match`})
+
       return;
     }
 
     signUpStart({ displayName, email, password });
   };
 
-  handleChange = e => {
+  const handleChange = e => {
     const { name, value } = e.target;
-    this.setState({ [name]: value });
-    this.setState({ error: '' });
+    setUserCredentials({ ...userCredentials, error: '', [name]: value });
   };
 
-  render() {
-    const { displayName, email, password, confirmPassword } = this.state;
-
-    return (
-      <SignUpContainer>
-        <SignUpTitle>I do not have a account</SignUpTitle>
-        <span>Sign up with your email and password</span>
-        <form onSubmit={this.handleSubmit} className="sign-up-form">
-          <FormInput
-            type="text"
-            name="displayName"
-            value={displayName}
-            onChange={this.handleChange}
-            label="Display Name"
-            required
-          />
-          <FormInput
-            type="email"
-            name="email"
-            value={email}
-            onChange={this.handleChange}
-            label="Email"
-            required
-          />
-          <FormInput
-            type="password"
-            name="password"
-            value={password}
-            onChange={this.handleChange}
-            label="Password"
-            required
-          />
-          <FormInput
-            type="password"
-            name="confirmPassword"
-            value={confirmPassword}
-            onChange={this.handleChange}
-            label="Confirm Password"
-            required
-          />
-          {this.state.error ? (
+  return (
+    <SignUpContainer>
+      <SignUpTitle>I do not have a account</SignUpTitle>
+      <span>Sign up with your email and password</span>
+      <form onSubmit={handleSubmit} className="sign-up-form">
+        <FormInput
+          type="text"
+          name="displayName"
+          value={displayName}
+          onChange={handleChange}
+          label="Display Name"
+          required
+        />
+        <FormInput
+          type="email"
+          name="email"
+          value={email}
+          onChange={handleChange}
+          label="Email"
+          required
+        />
+        <FormInput
+          type="password"
+          name="password"
+          value={password}
+          onChange={handleChange}
+          label="Password"
+          required
+        />
+        <FormInput
+          type="password"
+          name="confirmPassword"
+          value={confirmPassword}
+          onChange={handleChange}
+          label="Confirm Password"
+          required
+        />
+        { error ? (
+          <p
+          style={{
+            color: 'red',
+            fontSize: '18px',
+            marginTop: '-20px'
+          }}
+        >
+          {error}
+        </p>
+        ) : null}
+        {/* {this.state.error ? (
             <p
               style={{
                 color: 'red',
@@ -103,20 +108,22 @@ class SignUp extends Component {
             >
               {this.state.error}
             </p>
-          ) : null}
-          <CustomButton type="submit"> SIGN UP </CustomButton>
-        </form>
-      </SignUpContainer>
-    );
-  }
-}
+          ) : null} */}
+        <CustomButton type="submit"> SIGN UP </CustomButton>
+      </form>
+    </SignUpContainer>
+  );
+};
 
 const mapStateToProps = createStructuredSelector({
   userError: selectUserError
-})
+});
 
 const mapDispatchToProps = dispatch => ({
   signUpStart: userCredentials => dispatch(signUpStart(userCredentials))
-})
+});
 
-export default connect(mapStateToProps, mapDispatchToProps)(SignUp);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(SignUp);
