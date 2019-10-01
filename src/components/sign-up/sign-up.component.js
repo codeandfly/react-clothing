@@ -19,25 +19,33 @@ const SignUp = ({ signUpStart, userError }) => {
     error: ''
   });
 
-  const setFirebaseError = userError => {
-    if (userError) {
-      setUserCredentials({ ...userCredentials, error:  userError.message})
-    }
-  }
-
   useEffect(() => {
     // const {msg} = userError.message
-    setFirebaseError(userError)
-  }, [userError])
+    if (userError) {
+      setUserCredentials(userCredentials => ({
+        ...userCredentials,
+        error: userError.message
+      }));
+    }
+  }, [userError]);
 
-  const { displayName, email, password, confirmPassword, error } = userCredentials;
+  const {
+    displayName,
+    email,
+    password,
+    confirmPassword,
+    error
+  } = userCredentials;
 
   const handleSubmit = async e => {
     e.preventDefault();
 
     if (password !== confirmPassword) {
       // alert("Passwords don't match");
-      setUserCredentials({ ...userCredentials, error: `Passwords don't match`})
+      setUserCredentials({
+        ...userCredentials,
+        error: `Passwords don't match`
+      });
 
       return;
     }
@@ -87,16 +95,16 @@ const SignUp = ({ signUpStart, userError }) => {
           label="Confirm Password"
           required
         />
-        { error ? (
+        {error ? (
           <p
-          style={{
-            color: 'red',
-            fontSize: '18px',
-            marginTop: '-20px'
-          }}
-        >
-          {error}
-        </p>
+            style={{
+              color: 'red',
+              fontSize: '18px',
+              marginTop: '-20px'
+            }}
+          >
+            {error}
+          </p>
         ) : null}
         {/* {this.state.error ? (
             <p
